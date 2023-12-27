@@ -53,11 +53,25 @@ public class WordPredictor {
         wordFrequencies.get(sourceWord).merge(targetWord, 1, Integer::sum);
     }
 
-    public List<String> suggestNextWords(String inputWord) {
+    public String suggestNextWords(String inputWord) {
+        if (inputWord == null || inputWord.trim().isEmpty()) {
+            return "please enter a word";
+        }
         Map<String, Integer> nextWordFrequencies = wordFrequencies.getOrDefault(inputWord, new HashMap<>());
         PriorityQueue<Map.Entry<String, Integer>> maxHeap = createMaxHeap(nextWordFrequencies);
 
-        return extractTopSuggestions(maxHeap);
+        StringBuilder sb = new StringBuilder();
+
+        List<String> suggestions = extractTopSuggestions(maxHeap);
+
+        if (!suggestions.isEmpty()) {
+            suggestions.forEach(suggestion -> sb.append(suggestion).append(" , "));
+            sb.setLength(sb.length() - 2);
+        } else {
+            sb.append("no words found");
+        }
+
+        return sb.toString();
     }
 
     private PriorityQueue<Map.Entry<String, Integer>> createMaxHeap(Map<String, Integer> wordFrequencies) {
@@ -78,6 +92,7 @@ public class WordPredictor {
     }
 
     public String giveSuggestions(String inputWord, List<String> suggestions) {
+
         if (!suggestions.isEmpty()) {
             return String.join(" , ", suggestions);
         } else {
@@ -92,7 +107,7 @@ public class WordPredictor {
             return String.join(" , ", suggestions);
         } else {
             System.out.println("No suggestions for '" + inputWord + "'.");
-            return null;
+            return "no words found";
         }
     }
 

@@ -4,6 +4,7 @@ import javafx.geometry.Insets;
 import javafx.scene.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -42,7 +43,6 @@ public class HomePage {
         chooseFileButton.setOnAction(e -> choosePDFFile());
 
 
-
         // Set actions for buttons
         wordCompletingButton.setOnAction(e -> App.showWordCompletionPage());
         wordPredictionButton.setOnAction(e -> App.showWordPredictionPage());
@@ -74,6 +74,7 @@ public class HomePage {
             selectedFileLabel.setText("Selected PDF File: " + filePath);
             App.predictor.analyzeDocument(filePath);
             App.completer.analyzeDocument(filePath);
+            
             System.out.println("ANALYZATION COMPLETED.");
         } else {
             selectedFileLabel.setText("No file selected");

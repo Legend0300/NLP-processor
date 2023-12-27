@@ -22,11 +22,13 @@ public class WordCompleter {
     private final TrieNode root;
     private final Map<String, Integer> wordFrequencies;
     private int numberOfSuggestions; // New field
+    private StringBuilder currentInput; // New field
 
     public WordCompleter(int numberOfSuggestions) {
         this.root = new TrieNode();
         this.wordFrequencies = new HashMap<>();
         this.numberOfSuggestions = numberOfSuggestions;
+        this.currentInput = new StringBuilder();
     }
 
     public void insert(String word) {
@@ -39,6 +41,11 @@ public class WordCompleter {
     }
 
     public void buildTrieFromText(String text) {
+        if (text == null || text.trim().isEmpty()) {
+            System.out.println("Input text is empty or null.");
+            return;
+        }
+
         String[] words = text.toLowerCase().split("\\b\\P{Alpha}+\\b");
         for (String word : words) {
             insert(word);
@@ -48,9 +55,13 @@ public class WordCompleter {
 
     public String complete(String prefix) {
         TrieNode node = searchNode(prefix);
+        if (node == null) {
+            return prefix;
+        }
+
         StringBuilder result = new StringBuilder(prefix);
 
-        while (node != null && !node.isEndOfWord) {
+        while (!node.isEndOfWord) {
             char nextChar = getNextChar(node);
             result.append(nextChar);
             node = node.children.get(nextChar);
@@ -102,6 +113,10 @@ public class WordCompleter {
     public String returnMostFrequent(String prefix) {
         TrieNode node = searchNode(prefix);
 
+        if (prefix == null || prefix.trim().isEmpty()) {
+            return "Input text is empty or null.";
+        }
+
         StringBuilder suggestions = new StringBuilder();
 
         if (node != null && !node.isEndOfWord) {
@@ -152,17 +167,69 @@ public class WordCompleter {
         }
     }
 
-    public void analyzeDocument(String filePath) {
+    public boolean analyzeDocument(String filePath) {
         try {
             PDDocument document = PDDocument.load(new File(filePath));
             PDFTextStripper pdfStripper = new PDFTextStripper();
             String text = pdfStripper.getText(document);
             document.close();
-
             buildTrieFromText(text);
+            return true;
         } catch (IOException e) {
+            System.out.println("Error reading the document.");
             e.printStackTrace();
+            return false;
         }
     }
 
+    public void handleKeyPress(char key) {
+        if (key == ' ') {
+            handleSpace();
+        } else {
+            currentInput.append(key);
+        }
+    }
+
+    private void handleBackspace() {
+        if (currentInput.length() > 0) {
+            currentInput.deleteCharAt(currentInput.length() - 1);
+        }
+    }
+
+    private void handleSpace() {
+        if (currentInput.length() > 0) {
+            // Process the current input and reset for the next word
+            String inputWord = currentInput.toString();
+            currentInput.setLength(0); // Clear the input buffer
+
+            // Example: Analyze the current word
+            List<String> suggestions = suggestMostFrequent(inputWord);
+            System.out.println("Suggestions for '" + inputWord + "': " + suggestions);
+        }
+    }
+
+    public static void main(String[] args) {
+        int numberOfSuggestions = 4;
+        WordCompleter completer = new WordCompleter(numberOfSuggestions);
+
+        // Example: Analyze words from a PDF file
+        completer.analyzeDocument("D:\\Coding\\NLP Processor\\src\\Rich Dad Poor Dad What the Rich Teach Their Kids About Money—That the Poor and Middle Class Do Not by Robert T. Kiyosaki (z-lib.org).epub.pdf");
+
+        // Example input
+        String inputPrefix = "app";
+        List<String> suggestions = completer.suggestMostFrequent(inputPrefix);
+
+        System.out.println("Suggestions for '" + inputPrefix + "': " + suggestions);
+
+        // Example: Simulate key presses
+        for (char key : "apple".toCharArray()) {
+            completer.handleKeyPress(key);
+        }
+
+        // Handle the space at the end
+        completer.handleKeyPress(' ');
+
+        // Process the current input
+        completer.handleSpace();
+    }
 }

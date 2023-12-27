@@ -31,7 +31,7 @@ public class WordPrediction {
         backButton.setOnAction(e -> showHomePage());
 
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
-            textArea.setText(App.predictor.suggestNextWords(newValue).toString());
+            textArea.setText(App.predictor.suggestNextWords(newValue));
         });
 
         // Create layout for Word Completion scene
