@@ -39,7 +39,7 @@ public class WordCompletionApplication extends Application {
         wordPrediction = new WordPrediction(this);
         wordCompletion = new WordCompletion(this);
 
-        stage.getIcons().add(new Image("C:\\Users\\Legend\\Desktop\\NLP Processor\\NLP-processor\\fa12c5b9-e57d-44cf-9ed3-e3c45e0f2e3d.jpg"));
+        stage.getIcons().add(new Image("C:\\Users\\Legend\\Desktop\\NLP Processor\\NLP-processor\\images\\1520aefe-d06d-4750-845b-6312dfe065bf.jpg"));
 
         stage.setScene(homePage.getScene());
         stage.show();
