@@ -59,6 +59,7 @@ String inputPrefix = "app";
 List<String> suggestions = completer.suggestMostFrequent(inputPrefix);
 
 System.out.println("Suggestions for '" + inputPrefix + "': " + suggestions);
+```
 
 # How to Run
 
